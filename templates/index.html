@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tanklogger</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+
+        input, button {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #444;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th, td {
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        th {
+            border-bottom: 2px solid #333;
+        }
+
+        td {
+            border-bottom: 1px solid #333;
+        }
+
+        /* Grafik container responsive */
+        .plot-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container my-4">
+
+    <h1 class="mb-4">Tank-Log</h1>
+
+    <form method="post" action="/neu" class="mb-4">
+        <div class="row g-2">
+            <div class="col-12 col-md-2">
+                <input type="date" name="datum" value="{{ today }}" class="form-control">
+            </div>
+            <div class="col-12 col-md-2">
+                <input type="number" name="kilometer" value="{{ last_km }}" class="form-control" placeholder="KM">
+            </div>
+            <div class="col-12 col-md-2">
+                <input type="number" step="0.01" name="liter" class="form-control" placeholder="Liter">
+            </div>
+            <div class="col-12 col-md-2">
+                <input type="number" step="0.01" name="preis_pro_liter" class="form-control" placeholder="Preis/L">
+            </div>
+            <div class="col-12 col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Speichern</button>
+            </div>
+            <div class="col-12 col-md-4">
+                <input type="text" name="kommentar" class="form-control" placeholder="Kommentar (optional)">
+            </div>
+        </div>
+    </form>
+
+    <h2 class="mb-3">Bisherige Einträge</h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Kilometer</th>
+                    <th>Liter</th>
+                    <th>Preis/L</th>
+                    <th>Gesamtpreis</th>
+                    <th>Löschen</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for t in tankvorgaenge %}
+                <tr>
+                    <td>{{ t['datum'] }}</td>
+                    <td>{{ t['kilometer'] }}</td>
+                    <td>{{ t['liter'] }} L</td>
+                    <td>{{ t['preis_pro_liter'] }} €</td>
+                    <td>{{ (t['liter']*t['preis_pro_liter'])|round(2) }} €</td>
+                    <td>{{ t['kommentar'] }}</td>
+                    <td>
+                        <form method="post" action="/delete/{{ t['id'] }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mb-3">Grafik</h2>
+    <div class="plot-container">
+        {{ plot_html|safe }}
+    </div>
+
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

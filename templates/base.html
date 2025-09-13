@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tank-Logger{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            padding: 1rem;
+            flex-shrink: 0;
+        }
+        .sidebar a {
+            color: #e0e0e0;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0;
+        }
+        .sidebar a:hover {
+            background-color: #333;
+            border-radius: 4px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h1,h2,h3,h4,h5,h6 { color: #fff; }
+        .fw-bold.text-warning {
+            color: #ffc107 !important;
+        }
+        input, button {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h5>Navigation</h5>
+        <a href="{{ url_for('index', fahrzeug=selected_fahrzeug) }}">Home</a>
+        <a href="{{ url_for('plot_fuelcost', fahrzeug=selected_fahrzeug) }}">Plot Tankkosten</a>
+        <a href="{{ url_for('plot_overview', fahrzeug=selected_fahrzeug) }}">Plot Übersicht</a>
+        <a href="{{ url_for('plot_efficiency', fahrzeug=selected_fahrzeug) }}">Plot Effizienz</a>
+
+        <hr>
+
+        <h5>Fahrzeug</h5>
+        <!-- Bestehende Fahrzeuge -->
+        <ul class="list-unstyled">
+            {% for f in fahrzeuge %}
+            <li>
+                <a href="{{ url_for('index', fahrzeug=f) }}"
+                   class="{% if selected_fahrzeug == f %}fw-bold text-warning{% endif %}">
+                    {{ f }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <!-- Neues Fahrzeug hinzufügen -->
+        <form method="post" action="{{ url_for('fahrzeug_neu') }}">
+            <input type="text" name="fahrzeug_name" placeholder="Neues Fahrzeug" class="form-control mb-2" required>
+            <button type="submit" class="btn btn-sm btn-primary w-100">Hinzufügen</button>
+        </form>
+    </div>
+
+    <div class="content">
+        {% block content %}
+        <!-- Seiteninhalt wird hier eingefügt -->
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

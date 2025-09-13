@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Übersicht{% endblock %}
+
+{% block content %}
+<h1>Kostenübersicht</h1>
+<p>Gewähltes Fahrzeug: {{ selected_fahrzeug or "Keines ausgewählt" }}</p>
+
+<!-- Plot HTML wird hier eingebunden -->
+{{ plot_html|safe }}
+{% endblock %}

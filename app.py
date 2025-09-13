@@ -49,6 +49,10 @@ def list_vehicles():
 @app.route("/", methods=["GET"])
 def index():
     fahrzeuge = list_vehicles()
+    if not fahrzeuge:
+        # if there is no DB available, create one on this landing page
+        return render_template("no_vehicle.html")
+    
     selected_fahrzeug = request.args.get("fahrzeug") or (fahrzeuge[0] if fahrzeuge else None)
     rows = []
     last_km = ""
@@ -309,4 +313,4 @@ def plot_efficiency(fahrzeug):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5050, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

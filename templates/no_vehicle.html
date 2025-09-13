@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Willkommen beim Tank-Logger</h2>
+<p>Es wurden noch keine Fahrzeuge angelegt. Bitte lege zuerst ein Fahrzeug an:</p>
+
+<form method="post" action="{{ url_for('fahrzeug_neu') }}">
+    <input type="text" name="fahrzeug_name" placeholder="Fahrzeugname" class="form-control mb-2" required>
+    <button type="submit" class="btn btn-primary">Fahrzeug anlegen</button>
+</form>
+{% endblock %}

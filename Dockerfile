@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # create folder for DB
-RUN mkdir -p /app/data
+RUN mkdir -p /vehicles
 
 EXPOSE 5000
 

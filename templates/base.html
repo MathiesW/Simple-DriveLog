@@ -7,16 +7,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
+            margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: row;
-        }
-        .sidebar {
-            width: 220px;
-            background-color: #1e1e1e;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
             color: #e0e0e0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100%;
+            background-color: #1e1e1e;
             padding: 1rem;
-            flex-shrink: 0;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 1000;
         }
         .sidebar a {
             color: #e0e0e0;
@@ -28,33 +39,66 @@
             background-color: #333;
             border-radius: 4px;
         }
+        .sidebar.show {
+            left: 0;
+        }
+
+        /* Content */
         .content {
             flex-grow: 1;
+            margin-left: 220px; /* Platz für Sidebar */
             padding: 2rem;
-            background-color: #121212;
-            color: #e0e0e0;
         }
+
         h1,h2,h3,h4,h5,h6 { color: #fff; }
-        .fw-bold.text-warning {
-            color: #ffc107 !important;
+        .fw-bold.text-warning { color: #ffc107 !important; }
+
+        input, button { margin-bottom: 0.5rem; }
+
+        /* Hamburger Button für Mobil */
+        #hamburgerButton {
+            display: none;
         }
-        input, button {
-            margin-bottom: 0.5rem;
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px; /* versteckt */
+                padding-top: 3rem;
+            }
+            #hamburgerButton {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1100;
+            }
+            .content {
+                margin-left: 0; /* Content nimmt volle Breite */
+                padding: 1rem;
+                padding-top: 3rem; /* Abstand nach oben, damit Titel nicht unter Hamburger verschwindet */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <!-- Hamburger Button für Mobilgeräte -->
+    <button id="hamburgerButton" class="btn btn-secondary btn-sm">☰</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebarMenu">
         <h5>Navigation</h5>
         <a href="{{ url_for('index', fahrzeug=selected_fahrzeug) }}">Home</a>
-        <a href="{{ url_for('plot_fuelcost', fahrzeug=selected_fahrzeug) }}">Plot Tankkosten</a>
-        <a href="{{ url_for('plot_overview', fahrzeug=selected_fahrzeug) }}">Plot Übersicht</a>
-        <a href="{{ url_for('plot_efficiency', fahrzeug=selected_fahrzeug) }}">Plot Effizienz</a>
+        {% if selected_fahrzeug %}
+            <a href="{{ url_for('plot_fuelcost', fahrzeug=selected_fahrzeug) }}">Plot Tankkosten</a>
+            <a href="{{ url_for('plot_overview', fahrzeug=selected_fahrzeug) }}">Plot Übersicht</a>
+            <a href="{{ url_for('plot_efficiency', fahrzeug=selected_fahrzeug) }}">Plot Effizienz</a>
+        {% else %}
+            <p style="color:#888;">Bitte erst ein Fahrzeug anlegen</p>
+        {% endif %}
 
         <hr>
-
-        <h5>Fahrzeug</h5>
-        <!-- Bestehende Fahrzeuge -->
+        <h5>Fahrzeuge</h5>
         <ul class="list-unstyled">
             {% for f in fahrzeuge %}
             <li>
@@ -65,19 +109,28 @@
             </li>
             {% endfor %}
         </ul>
-        <!-- Neues Fahrzeug hinzufügen -->
+
         <form method="post" action="{{ url_for('fahrzeug_neu') }}">
             <input type="text" name="fahrzeug_name" placeholder="Neues Fahrzeug" class="form-control mb-2" required>
             <button type="submit" class="btn btn-sm btn-primary w-100">Hinzufügen</button>
         </form>
     </div>
 
+    <!-- Content -->
     <div class="content">
         {% block content %}
-        <!-- Seiteninhalt wird hier eingefügt -->
+        <!-- Seiteninhalt -->
         {% endblock %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById('sidebarMenu');
+        const hamburger = document.getElementById('hamburgerButton');
+
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+    </script>
 </body>
 </html>
